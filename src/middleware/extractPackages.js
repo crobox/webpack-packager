@@ -1,12 +1,19 @@
-var utils = require('../utils');
+function isValidPackages(packages) {
+  return packages.reduce(function (isValid, pkg) {
+    if (pkg.indexOf('@') === -1) {
+      return false
+    }
 
-function extractPackages (req, res, next) {
-  req.params.packages = req.params['0'];
-  if (!utils.isValidPackages(req.params.packages)) {
+    return isValid
+  }, true)
+}
+
+module.exports = function extractPackages (req, res, next) {
+  var packages = req.params['0'].split('+');
+  if (!isValidPackages(packages)) {
     res.sendStatus(404);
   } else {
+    req.params.packages = packages;
     next();
   }
 }
-
-module.exports = extractPackages;
